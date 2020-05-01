@@ -1,0 +1,91 @@
+---
+title: "Untitled"
+author: "Emily G. Mantin"
+date: "May 1, 2020"
+output:
+  pdf_document: default
+  html_document:
+    keep_tex: yes
+header-includes: \usepackage{dcolumn}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r (bh_N), echo=FALSE}
+library(pander)
+
+na <- read.table("2020-04-16_Nutrient Analysis_2.0.csv", header = TRUE,
+                 sep = ",")
+bh_N <- as.data.frame(na[1:16, c(2,5)])       ## Bible Hill Nitrogen Content
+attach(bh_N)
+bh_N_aov <- aov(N..plant ~ Treatment)
+pander(summary(bh_N_aov))
+```
+
+```{r, echo=FALSE, warning=FALSE}
+library(knitr)
+library(kableExtra)
+library(magrittr)
+
+na <- read.table("2020-04-16_Nutrient Analysis_2.0.csv", header = TRUE,
+                 sep = ",")
+
+bh_NP.tab <- as.data.frame(na[1:16, c(2,5:7)])
+
+bh_NP.tab2 <- as.data.frame(bh_NP.tab[, -3])
+
+sum.table <- aggregate(bh_NP.tab2[, 2:3], list(bh_NP.tab2$Treatment), FUN = "mean")
+
+names(sum.table)[1] <- "Treatment"
+names(sum.table)[2] <- "Nitrogen Content (g N plant^-1^)"
+names(sum.table)[3] <- "Phosphorus Content (g P plant^-1^)"
+
+knitr::kable(sum.table, booktabs = T, caption = "Mean values of nitrogen and phosphorus content measured in the fall of the establishment year (2019).") %>%
+  kable_styling(latex_options = c("hold_position"), 
+                full_width = T) %>%
+  column_spec(1, width = "8cm") %>%
+  footnote(c("CT = Control, DG = Digestate, PS = Paper Sludge, SE = Seaweed Extract"))
+
+```
+
+```{r, echo=FALSE, warning=FALSE}
+library(knitr)
+library(kableExtra)
+library(magrittr)
+
+options(knitr.kable.NA = '')
+
+na <- read.table("2020-04-16_Nutrient Analysis_2.0.csv", header = TRUE,
+                 sep = ",")
+bh_N <- as.data.frame(na[1:16, c(2,5)])       ## Bible Hill Nitrogen Content
+attach(bh_N)
+model1 <- lm(N..plant ~ Treatment)
+mod1.aov <- anova(model1)
+
+knitr::kable(mod1.aov, booktabs = T, caption = "Mean values of nitrogen and phosphorus content measured in the fall of the establishment year (2019).") %>%
+  kable_styling(latex_options = c("hold_position"), 
+                full_width = T) %>%
+  footnote("Signif. codes: 0 '***', 0.001 '**', 0.01 '*', 0.05 '.', 0.1 '' 1")
+  
+  
+
+```
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

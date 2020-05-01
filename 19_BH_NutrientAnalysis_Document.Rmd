@@ -1,24 +1,44 @@
 ---
-title: "2019 Nutrient Analysis - Bible Hill"
+title: "2019 Miscanthus Nutrient Analysis - Bible Hill"
 author: "Emily G. Mantin"
-date: "May 1, 2020"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
-  html_document:
-    toc: yes
-    
+  pdf_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# Miscanthus 
 
 ## Nutrient Analysis
 
-### Nitrogen Content
+Miscanthus shoot samples were collected in the fall for nutrient analysis.  Shoots were cut approximately 5 cm above ground level and placed in labelled paper bags.  Samples were placed in a drying oven (VWR Signature^TM^)  
 
-Miscanthus biomass samples were collected for nutrient analysis from the Bible Hill field site on 01 October 2019.  Mean nitrogen content of Miscanthus plants was 
+## Nitrogen Content
+
+```{r, echo=FALSE, warning=FALSE}
+library(pander)
+
+na <- read.table("2020-04-16_Nutrient Analysis_2.0.csv", header = TRUE,
+                 sep = ",")
+
+bh_NP.tab <- as.data.frame(na[1:16, c(2,5:7)])
+
+bh_NP.tab2 <- as.data.frame(bh_NP.tab[, -3])
+
+sum.table <- aggregate(bh_NP.tab2[, 2:3], list(bh_NP.tab2$Treatment), FUN = "mean")
+
+names(sum.table)[1] <- "Treatment"
+names(sum.table)[2] <- "Nitrogen Content (g N plant^-1^)"
+names(sum.table)[3] <- "Phosphorus Content (g P plant^-1^)"
+
+panderOptions('missing', '')
+pander(sum.table, caption = "Mean values of nitrogen and phosphorus content measured in the fall of the establishment year (2019).")
+```
+
+
 
 
 ```{r (bh_N), echo=FALSE, warning=FALSE}
@@ -31,7 +51,7 @@ attach(bh_N)
 model1 <- lm(N..plant ~ Treatment)
 mod1.aov <- anova(model1)
 panderOptions('missing', '')
-pander(mod1.aov, caption = "ANOVA results of mean nitrogen content per plant (g N plant^-1^) in Miscanthus biomass collected on 01 October 2019 from Bible Hill, NS.")
+pander(mod1.aov, caption = "ANOVA results of mean nitrogen content per plant (g N plant^-1^) in Miscanthus biomass collected on 01 October 2019 from Bible Hill, NS.", add.significance.stars = TRUE)
 
 ```
 
