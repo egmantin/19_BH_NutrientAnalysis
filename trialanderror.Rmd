@@ -3,10 +3,12 @@ title: "Untitled"
 author: "Emily G. Mantin"
 date: "May 1, 2020"
 output:
-  pdf_document: default
   html_document:
     keep_tex: yes
-header-includes: \usepackage{dcolumn}
+  pdf_document: default
+header-includes: 
+-     \usepackage{dcolumn}
+      \usepackage(subfig)
 ---
 
 ```{r setup, include=FALSE}
@@ -76,6 +78,76 @@ knitr::kable(mod1.aov, booktabs = T, caption = "Mean values of nitrogen and phos
   footnote("Signif. codes: 0 '***', 0.001 '**', 0.01 '*', 0.05 '.', 0.1 '' 1")
   
   
+
+```
+
+
+```{r fig-sub, echo=FALSE, fig.cap = "Histogram", fig.subcap = c("Nitrogen Content per Miscanthus plant (g N plant^-1^)", "Residuals of Nitrogen Content")}
+
+par(mfrow = c(1, 2))
+
+## Plot the distribution of the observed data
+
+hist(bh_N$N..plant, 
+     breaks = 15, 
+     col = "gray", 
+     main = "", 
+     xlab = expression(Nitrogen ~ Content ~ (g ~ plant^{-1})))
+
+## TEST ASSUMPTIONS OF NORMALITY AND HOMOGENEITY ##
+
+## Generate a one-way analysis of variance ##
+
+bh_N_aov <- aov(bh_N$N..plant ~ bh_N$Treatment)
+
+
+## Generate residual and predicted values based on observed values ##
+bh_N$resids <- residuals(bh_N_aov)
+bh_N$preds <- predict(bh_N_aov)
+bh_N$sq_preds <- bh_N$preds^2
+
+## Create a histogram of residuals to check for normality ##
+
+hist(bh_N$resids,
+          xlab = "Residuals",
+          col = "gray",
+          main = "",
+          breaks = 15)
+
+```
+
+```{r, echo = FALSE, fig.cap = "Histogram", fig.subcap = c("Nitrogen Content per Miscanthus plant (g N plant^-1^)", "Residuals of Nitrogen Content"), fig.ncol = 2, fig.show="hold"}
+
+library(knitr)
+
+
+## Plot the distribution of the observed data
+
+hist(bh_N$N..plant, 
+     breaks = 15, 
+     col = "gray", 
+     main = "", 
+     xlab = expression(Nitrogen ~ Content ~ (g ~ plant^{-1})))
+
+## TEST ASSUMPTIONS OF NORMALITY AND HOMOGENEITY ##
+
+## Generate a one-way analysis of variance ##
+
+bh_N_aov <- aov(bh_N$N..plant ~ bh_N$Treatment)
+
+
+## Generate residual and predicted values based on observed values ##
+bh_N$resids <- residuals(bh_N_aov)
+bh_N$preds <- predict(bh_N_aov)
+bh_N$sq_preds <- bh_N$preds^2
+
+## Create a histogram of residuals to check for normality ##
+
+hist(bh_N$resids,
+          xlab = "Residuals",
+          col = "gray",
+          main = "",
+          breaks = 15)
 
 ```
 

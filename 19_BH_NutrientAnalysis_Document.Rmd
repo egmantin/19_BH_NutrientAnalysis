@@ -5,6 +5,8 @@ date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
   pdf_document: default
   html_document: default
+header-includes: 
+    - \usepackage{subfig}
 ---
 
 ```{r setup, include=FALSE}
@@ -14,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Nutrient Analysis
 
-Miscanthus shoot samples were collected in the fall for nutrient analysis.  Shoots were cut approximately 5 cm above ground level and placed in labelled paper bags.  Samples were placed in a drying oven (VWR Signature^TM^)  
+Miscanthus shoot samples were collected in the fall for nutrient analysis.  Shoots were cut approximately 5 cm above ground level and placed in labelled paper bags.  Samples were placed in a drying oven (VWR Signature^TM^ Forced Air Safety Oven) and dried at 80 $^\circ$C for a minimum of seven days.  Upon removal from the oven, samples were ground using a Wiley Mill (Standard Model No. 3, Arthur H. Thomas Co.) and passed through a 1.0 mm sieve.  Ground samples were sent for plant tissue analysis at Harlow Institute (Dalhousie Agricultural Campus, Truro, NS, Canada).   
 
 ## Nitrogen Content
 
@@ -38,7 +40,9 @@ panderOptions('missing', '')
 pander(sum.table, caption = "Mean values of nitrogen and phosphorus content measured in the fall of the establishment year (2019).")
 ```
 
+### Normality Assumptions
 
+Prior to the completion of any statistical analyses, a histogram of the observed data (and subsequent errors) should be evaluated to estimate the most appropriate distribution to assign to the Generalized Linear Model (GLM).  To further support the visualization, two significance tests can be run to check normality and homogeneity of variance. 
 
 
 ```{r (bh_N), echo=FALSE, warning=FALSE}
@@ -47,8 +51,8 @@ library(pander)
 na <- read.table("2020-04-16_Nutrient Analysis_2.0.csv", header = TRUE,
                  sep = ",")
 bh_N <- as.data.frame(na[1:16, c(2,5)])       ## Bible Hill Nitrogen Content
-attach(bh_N)
-model1 <- lm(N..plant ~ Treatment)
+
+model1 <- lm(bh_N$N..plant ~ Treatment, data = bh_N)
 mod1.aov <- anova(model1)
 panderOptions('missing', '')
 pander(mod1.aov, caption = "ANOVA results of mean nitrogen content per plant (g N plant^-1^) in Miscanthus biomass collected on 01 October 2019 from Bible Hill, NS.", add.significance.stars = TRUE)
@@ -61,8 +65,36 @@ pander(mod1.aov, caption = "ANOVA results of mean nitrogen content per plant (g 
 
 You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+```{r fig-sub, echo = FALSE, fig.cap = "Histogram", fig.subcap = c('Nitrogen Content per Miscanthus plant (g N plant^-1^)', 'Residuals of Nitrogen Content')}
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+par(mfrow= c(1, 2))
+
+## Plot the distribution of the observed data
+
+hist(bh_N$N..plant, 
+     breaks = 15, 
+     col = "gray", 
+     main = "", 
+     xlab = expression(Nitrogen ~ Content ~ (g ~ plant^{-1})))
+
+## TEST ASSUMPTIONS OF NORMALITY AND HOMOGENEITY ##
+
+## Generate a one-way analysis of variance ##
+
+bh_N_aov <- aov(bh_N$N..plant ~ bh_N$Treatment)
+
+
+## Generate residual and predicted values based on observed values ##
+bh_N$resids <- residuals(bh_N_aov)
+bh_N$preds <- predict(bh_N_aov)
+bh_N$sq_preds <- bh_N$preds^2
+
+## Create a histogram of residuals to check for normality ##
+
+hist(bh_N$resids,
+          xlab = "Residuals",
+          col = "gray",
+          main = "",
+          breaks = 15)
+
+```
