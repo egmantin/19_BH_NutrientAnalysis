@@ -1,0 +1,48 @@
+---
+title: "2019 Nutrient Analysis - Bible Hill"
+author: "Emily G. Mantin"
+date: "May 1, 2020"
+output:
+  html_document:
+    toc: yes
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Miscanthus 
+
+## Nutrient Analysis
+
+### Nitrogen Content
+
+Miscanthus biomass samples were collected for nutrient analysis from the Bible Hill field site on 01 October 2019.  Mean nitrogen content of Miscanthus plants was 
+
+
+```{r (bh_N), echo=FALSE, warning=FALSE}
+library(pander)
+
+na <- read.table("2020-04-16_Nutrient Analysis_2.0.csv", header = TRUE,
+                 sep = ",")
+bh_N <- as.data.frame(na[1:16, c(2,5)])       ## Bible Hill Nitrogen Content
+attach(bh_N)
+model1 <- lm(N..plant ~ Treatment)
+mod1.aov <- anova(model1)
+panderOptions('missing', '')
+pander(mod1.aov, caption = "ANOVA results of mean nitrogen content per plant (g N plant^-1^) in Miscanthus biomass collected on 01 October 2019 from Bible Hill, NS.")
+
+```
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
