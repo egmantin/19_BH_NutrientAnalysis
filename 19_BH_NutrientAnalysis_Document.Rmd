@@ -3,7 +3,7 @@ title: "2019 Miscanthus Nutrient Analysis - Bible Hill"
 author: "Emily G. Mantin"
 date: "`r format(Sys.Date(), '%d %B %Y')`"
 output:
-  pdf_document: default
+  pdf_document: 
   html_document: default
 header-includes: 
     - \usepackage{subfig}
@@ -67,7 +67,7 @@ You can also embed plots, for example:
 
 ```{r fig-sub, echo = FALSE, fig.cap = "Histogram", fig.subcap = c('Nitrogen Content per Miscanthus plant (g N plant^-1^)', 'Residuals of Nitrogen Content')}
 
-par(mfrow= c(1, 2))
+par(mfrow = c(1, 2))
 
 ## Plot the distribution of the observed data
 
